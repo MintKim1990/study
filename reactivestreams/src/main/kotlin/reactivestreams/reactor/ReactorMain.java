@@ -10,7 +10,7 @@ import java.util.List;
  * 자세한 코드는 EventLoop 참고
  */
 @Slf4j
-public class NettyMain {
+public class ReactorMain {
     public static void main(String[] args) {
         List<EventLoop> TCPEventLoops = List.of(new TCPEventLoop(8080));
         TCPEventLoops.forEach(EventLoop::run);
