@@ -53,9 +53,10 @@ public class TCPEventLoop implements EventLoop {
         serverSocketChannel.bind(new InetSocketAddress("localhost", port));
         // 해당설정을 false로 변경시 nonBlocking 방식으로 동작 기본은 true (Blocking)
         serverSocketChannel.configureBlocking(false);
-        // 내부적으로 따라들어가면 epoll_ctl 메서드를 호출하여 관심있는 이벤트를 등록
-        // 아래 코드에서는 serverSocketChannel도 FileDescriptor에 저장되어있을거고
-        // 해당 채널에 클라이언트가 커넥션 Accept 이벤트 등록
+        // 내부적으로 따라들어가면 Deque<SelectionKeyImpl> updateKeys 큐에
+        // Epoll ctl 메서드로 등록할 클라이언트 Accept 이벤트를 저장해놓고
+        // 아래에 selector.select 메서드를 호출하면 Deque에서 ctl에 등록할 이벤트들을 추출하여 이벤트 등록
+        // 아래 코드에서는 serverSocketChannel fd번호와 Accept 이벤트를 epoll 인스턴스에 등록
         // attach 메서드는 Accept 이벤트가 발생했을때 처리할 처리자를 SelectionKey에 저장하는 메서드
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT).attach(acceptor);
     }
@@ -64,8 +65,12 @@ public class TCPEventLoop implements EventLoop {
     public void run() {
         executorService.submit(() -> {
            while (true) {
+               // epoll_wait 메서드를 호출하기전 등록해놨던 이벤트들을 epoll 인스턴스 이벤트에 등록하기 위해
+               // Deque에서 이벤트 정보들을 꺼내와서 epoll_ctl 메서드로 등록
                // Selector에서 이벤트가 발생할때까지 Blocking 처리되며 이는 내부적으로 epoll_wait 메서드를 타임아웃을 무한으로 지정하여 호출
                // epoll에 등록된 FileDescriptor중 이벤트가 발생할경우 대기상태에서 빠져나옴
+               // 해당 코드에서는 클라이언트 Accept 메서드를 epoll_ctl 메서드로 등록 후 해당 이벤트가
+               // 발생할때까지 epoll_wait로 무한대기
                selector.select();
                // Selector.selectedKeys() 조회시 발생한 이벤트에 대한 정보를 리턴
                Iterator<SelectionKey> selectionKeys = selector.selectedKeys().iterator();
