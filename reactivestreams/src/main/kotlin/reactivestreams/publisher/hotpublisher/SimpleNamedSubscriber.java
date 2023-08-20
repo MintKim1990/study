@@ -1,4 +1,4 @@
-package reactivestreams.publisher.subscriber;
+package reactivestreams.publisher.hotpublisher;
 
 import java.util.concurrent.Flow;
 

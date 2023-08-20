@@ -1,7 +1,5 @@
 package reactivestreams.publisher.hotpublisher;
 
-import reactivestreams.publisher.subscriber.SimpleNamedSubscriber;
-
 public class SimpleHotPublisherMain {
 
     public static void main(String[] args) throws InterruptedException {

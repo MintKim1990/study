@@ -1,7 +1,5 @@
 package reactivestreams.publisher.coldpublisher;
 
-import reactivestreams.publisher.subscriber.SimpleNamedSubscriber;
-
 public class SimpleColdPublisherMain {
 
     public static void main(String[] args) throws InterruptedException {
