@@ -3,6 +3,16 @@ dependencies {
     implementation("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
 
-    // Netty
-    implementation("io.netty:netty-all:4.1.24.Final")
+    // WebFlux
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-mustache")
+    implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+
+    // reactor tool
+    implementation("io.projectreactor:reactor-tools")
+
+    // r2dbc
+    implementation("io.asyncer:r2dbc-mysql:0.9.2")
 }
