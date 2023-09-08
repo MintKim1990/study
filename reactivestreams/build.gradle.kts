@@ -9,6 +9,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("org.springframework.security:spring-security-core")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
     // reactor tool
     implementation("io.projectreactor:reactor-tools")
