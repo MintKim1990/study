@@ -11,6 +11,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
+    // kotlin
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx3")
+
     // reactor tool
     implementation("io.projectreactor:reactor-tools")
 
