@@ -1,9 +1,8 @@
 dependencies {
-    // Websocket
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
 
     // Springboot
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     implementation("io.github.microutils:kotlin-logging:3.0.5")

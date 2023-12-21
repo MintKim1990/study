@@ -1,4 +1,4 @@
-package chat
+package chat.service
 
 data class ChatRequest(
     val type: MessageType,

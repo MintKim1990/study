@@ -1,10 +1,10 @@
-package chat
+package chat.service
 
+import chat.domain.ChatRoom
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
-import org.springframework.web.socket.TextMessage
-import org.springframework.web.socket.WebSocketSession
-import java.util.UUID
+import org.springframework.web.reactive.socket.WebSocketSession
+import java.util.*
 
 @Service
 class ChatService(
@@ -21,7 +21,7 @@ class ChatService(
     }
 
     fun <T> sendMessage(session: WebSocketSession, message: T) {
-        session.sendMessage(TextMessage(objectMapper.writeValueAsString(message)))
+
     }
 
 }

@@ -55,7 +55,7 @@
 
 	function wsOpen(){
 		//websocket을 지정한 URL로 연결
-		ws = new WebSocket("ws://" + location.host + "/ws/chat");
+		ws = new WebSocket("ws://localhost:8080/ws/chat");
 		wsEvt();
 	}
 

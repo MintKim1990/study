@@ -1,7 +1,9 @@
-package chat
+package chat.domain
 
-import chat.MessageType.JOIN
-import org.springframework.web.socket.WebSocketSession
+import chat.service.ChatRequest
+import chat.service.ChatService
+import chat.service.MessageType.JOIN
+import org.springframework.web.reactive.socket.WebSocketSession
 
 class ChatRoom(
     val id: String,

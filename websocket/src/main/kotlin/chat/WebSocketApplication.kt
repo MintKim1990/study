@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class WebSocketApplication
 
 fun main(args: Array<String>) {
-    runApplication<WebSocketApplication>(*args);
+    runApplication<WebSocketApplication>(*args)
 }
