@@ -7,6 +7,9 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging:3.0.5")
 
+    // Embedded Redis
+    //implementation(group = "it.ozimov", name = "embedded-redis", version = "0.7.1")
+
     // kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

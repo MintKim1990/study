@@ -6,7 +6,7 @@ import reactor.core.publisher.Sinks
 @Component
 class MessagePublisher {
 
-    val sinks = Sinks.many().unicast().onBackpressureBuffer<String>()
+    val sinks = Sinks.many().multicast().onBackpressureBuffer<String>()
 
     fun publish(message: String) = sinks.tryEmitNext(message)
 

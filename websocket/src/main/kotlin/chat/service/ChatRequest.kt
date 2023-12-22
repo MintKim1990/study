@@ -1,12 +1,11 @@
 package chat.service
 
 data class ChatRequest(
-    val type: MessageType,
-    val roomId: String,
+    val command: MessageCommand,
     val sender: String,
     var message: String?,
 )
 
-enum class MessageType {
+enum class MessageCommand {
     JOIN, TALK
 }

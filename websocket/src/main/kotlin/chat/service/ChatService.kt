@@ -17,7 +17,7 @@ class ChatService(
     fun findRoom(roomId: String) = chatRooms[roomId]
 
     fun createRoom(name: String) : ChatRoom {
-        return ChatRoom(id = UUID.randomUUID().toString(), name = name).also { chatRooms[it.id] = it }
+        return ChatRoom(name = name).also { chatRooms[it.id] = it }
     }
 
     fun <T> sendMessage(session: WebSocketSession, message: T) {

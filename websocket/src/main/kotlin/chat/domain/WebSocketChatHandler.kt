@@ -1,33 +1,34 @@
 package chat.domain
 
-import chat.service.ChatRequest
-import chat.service.ChatService
-import chat.service.MessageType
+import chat.service.RoomService
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
-import org.springframework.core.io.buffer.NettyDataBuffer
+import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.socket.WebSocketHandler
-import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.publisher.Sinks
-import java.time.Duration
-import java.util.function.Consumer
 
 @Component
 class WebSocketChatHandler(
     private val objectMapper: ObjectMapper,
     private val messagePublisher: MessagePublisher,
+    private val roomService: RoomService,
+    private val reactiveRedisMessageListenerContainer: ReactiveRedisMessageListenerContainer,
 ) : WebSocketHandler {
 
     private val logger = KotlinLogging.logger {}
 
+    companion object {
+        const val CHAT_ROOM_ID = "Chat-Room-Id"
+    }
 
     override fun handle(session: WebSocketSession): Mono<Void> {
 
         logger.info { "최초접근" }
+
+
 
 //        val ping = Flux.interval(Duration.ofSeconds(10))
 //            .map { session.pingMessage { it.wrap(byteArrayOf()) } }
@@ -36,18 +37,31 @@ class WebSocketChatHandler(
 //        val sendMessage = objectMapper.writeValueAsString(chatRequest)
 
 
-        val many = messagePublisher.sinks
-        many.asFlux()
-            .subscribe {
-                logger.info { "sink message : $it" }
-                session.send(Mono.just(session.textMessage(objectMapper.writeValueAsString(it)))).subscribe()
-            }
+        val chatRoomId = getChatRoomId(session)
 
-        return session.receive()
-            .doOnNext {
-                logger.info { "receive message : ${it.payloadAsText}" }
-                many.tryEmitNext(it.payloadAsText)
-            }.then()
+        val sendMessage = session.receive()
+            .flatMap { roomService.publish(it, chatRoomId) }
+
+        val receiveMessage = session.send(roomService.subscribe(session, chatRoomId))
+
+        return Flux.zip(sendMessage, receiveMessage).then()
+    }
+
+    private fun getChatRoomId(session: WebSocketSession) : String {
+
+        /***
+         * 핸드쉐이크 헤더에서 Room 키값을 토큰에서 꺼내오는 방식으로 변경예정,
+         * JS에서는 헤더값 추가가 불가능해 QueryParam 방식으로 임시 사용
+         *
+         * val chatRoomId = session.handshakeInfo.headers.getOrEmpty(CHAT_ROOM_ID)
+                                   .stream()
+                                   .findFirst() ?: throw IllegalStateException("채팅방 ID가 없습니다.")
+         *
+         */
+
+        return session.handshakeInfo.uri.query.let {
+            it.replace("chatRoomId=", "")
+        }
     }
 }
 
