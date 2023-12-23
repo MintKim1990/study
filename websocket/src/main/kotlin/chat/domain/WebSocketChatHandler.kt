@@ -6,9 +6,11 @@ import mu.KotlinLogging
 import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.socket.WebSocketHandler
+import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Duration
 
 @Component
 class WebSocketChatHandler(
@@ -26,23 +28,27 @@ class WebSocketChatHandler(
 
     override fun handle(session: WebSocketSession): Mono<Void> {
 
-        logger.info { "최초접근" }
+        logger.info { "최초접근 sessionId : ${session.id}" }
 
 
 
-//        val ping = Flux.interval(Duration.ofSeconds(10))
-//            .map { session.pingMessage { it.wrap(byteArrayOf()) } }
 
-//        val chatRequest = ChatRequest(type = MessageType.JOIN, roomId = "roomId", sender = "sender", message = "OK")
-//        val sendMessage = objectMapper.writeValueAsString(chatRequest)
 
 
         val chatRoomId = getChatRoomId(session)
 
         val sendMessage = session.receive()
+            .log("${session.id} Receive")
+            .filter { it.type == WebSocketMessage.Type.TEXT }
             .flatMap { roomService.publish(it, chatRoomId) }
 
-        val receiveMessage = session.send(roomService.subscribe(session, chatRoomId))
+        val ping = Flux.interval(Duration.ofSeconds(20))
+            .map { session.pingMessage { session.bufferFactory().allocateBuffer() } }
+
+        val receiveMessage = session.send(
+            Flux.merge(roomService.subscribe(session, chatRoomId), ping)
+                .log("${session.id} Send")
+        )
 
         return Flux.zip(sendMessage, receiveMessage).then()
     }
