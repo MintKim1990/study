@@ -1,8 +1,7 @@
 package reactivestreams.coroutine.runner
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 import reactivestreams.coroutine.domain.Auth
@@ -17,16 +16,18 @@ class UserSampleDataInsertRunner(
 ) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).async {
             sampleDataInsert()
         }
     }
 
     suspend fun sampleDataInsert() {
-        val user = User("name", 15, "password")
-        userRepository.save(user)
-            .let { Auth(it.id!!, "token") }
-            .let { authRepository.save(it) }
+        userRepository.save(User("name", 15, "password"))
+            .awaitSingle()
+            .let {
+                Auth(it.id!!, "token")
+            }
+            .let { authRepository.save(it).awaitSingle() }
     }
 
 }

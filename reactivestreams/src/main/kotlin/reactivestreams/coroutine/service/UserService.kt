@@ -1,5 +1,6 @@
 package reactivestreams.coroutine.service
 
+import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.stereotype.Service
 import reactivestreams.coroutine.domain.UserRepository
 import reactivestreams.coroutine.service.response.UserResponse
@@ -10,7 +11,7 @@ class UserService(
 ) {
 
     suspend fun findById(userId: Long): UserResponse {
-        return userRepository.findById(userId).let { UserResponse(it!!) }
+        return userRepository.findById(userId).awaitSingle().let { UserResponse(it) }
     }
 
 }

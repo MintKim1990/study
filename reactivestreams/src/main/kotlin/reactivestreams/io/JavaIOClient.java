@@ -2,6 +2,8 @@ package reactivestreams.io;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +22,7 @@ public class JavaIOClient {
 
     private static final Integer PROCESSED_COUNT = 400;
     private static final String MESSAGE = "This is Client";
+    private static final Logger log = LoggerFactory.getLogger(JavaIOClient.class);
     private static ExecutorService executorService = Executors.newFixedThreadPool(PROCESSED_COUNT);
 
     @SneakyThrows
